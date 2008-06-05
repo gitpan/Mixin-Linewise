@@ -18,5 +18,6 @@ requires:
   Carp: 0
   IO::File: 0
   IO::String: 0
+  Sub::Exporter: 0.9
   perl: 5.6.0
-version: 0.001
+version: 0.002
