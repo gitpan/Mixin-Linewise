@@ -1,14 +1,75 @@
-use inc::Module::Install;
 
-all_from('lib/Mixin/Linewise.pm');
-requires('Carp'       => 0.000); # sure, it's core, but let's be thorough
-requires('IO::String' => 0.000); # minimum unknown
-requires('IO::File'   => 0.000); # minimum unknown
-requires('Sub::Exporter' => 0.900); # minimum unknown
+use strict;
+use warnings;
 
-test_requires('Test::More' => 0.88); # done_testing
+use 5.006;
 
-auto_manifest;
-extra_tests;
+use ExtUtils::MakeMaker 6.30;
 
-WriteAll;
+
+
+my %WriteMakefileArgs = (
+  "ABSTRACT" => "write your linewise code for handles; this does the rest",
+  "AUTHOR" => "Ricardo SIGNES <rjbs\@cpan.org>",
+  "BUILD_REQUIRES" => {},
+  "CONFIGURE_REQUIRES" => {
+    "ExtUtils::MakeMaker" => "6.30"
+  },
+  "DISTNAME" => "Mixin-Linewise",
+  "EXE_FILES" => [],
+  "LICENSE" => "perl",
+  "NAME" => "Mixin::Linewise",
+  "PREREQ_PM" => {
+    "Carp" => 0,
+    "IO::File" => 0,
+    "IO::String" => 0,
+    "Sub::Exporter" => 0,
+    "strict" => 0,
+    "warnings" => 0
+  },
+  "TEST_REQUIRES" => {
+    "File::Find" => 0,
+    "File::Temp" => 0,
+    "Test::More" => "0.96",
+    "lib" => 0
+  },
+  "VERSION" => "0.004",
+  "test" => {
+    "TESTS" => "t/*.t"
+  }
+);
+
+
+unless ( eval { ExtUtils::MakeMaker->VERSION(6.63_03) } ) {
+  my $tr = delete $WriteMakefileArgs{TEST_REQUIRES};
+  my $br = $WriteMakefileArgs{BUILD_REQUIRES};
+  for my $mod ( keys %$tr ) {
+    if ( exists $br->{$mod} ) {
+      $br->{$mod} = $tr->{$mod} if $tr->{$mod} > $br->{$mod};
+    }
+    else {
+      $br->{$mod} = $tr->{$mod};
+    }
+  }
+}
+
+unless ( eval { ExtUtils::MakeMaker->VERSION(6.56) } ) {
+  my $br = delete $WriteMakefileArgs{BUILD_REQUIRES};
+  my $pp = $WriteMakefileArgs{PREREQ_PM};
+  for my $mod ( keys %$br ) {
+    if ( exists $pp->{$mod} ) {
+      $pp->{$mod} = $br->{$mod} if $br->{$mod} > $pp->{$mod};
+    }
+    else {
+      $pp->{$mod} = $br->{$mod};
+    }
+  }
+}
+
+delete $WriteMakefileArgs{CONFIGURE_REQUIRES}
+  unless eval { ExtUtils::MakeMaker->VERSION(6.52) };
+
+WriteMakefile(%WriteMakefileArgs);
+
+
+

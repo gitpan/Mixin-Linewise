@@ -1,3 +1,13 @@
 
-Given {read,write}_handle methods, produce methods for strings and filenames.
+
+This archive contains the distribution Mixin-Linewise,
+version 0.004:
+
+  write your linewise code for handles; this does the rest
+
+This software is copyright (c) 2008 by Ricardo SIGNES.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 

@@ -1,8 +1,10 @@
 use strict;
 use warnings;
 package Mixin::Linewise::Readers;
-
-our $VERSION = '0.003';
+{
+  $Mixin::Linewise::Readers::VERSION = '0.004';
+}
+# ABSTRACT: get linewise readers for strings and filenames
 
 use Carp ();
 use IO::File;
@@ -16,9 +18,57 @@ use Sub::Exporter -setup => {
   },
 };
 
+
+sub _mk_read_file {
+  my ($self, $name, $arg) = @_;
+
+  my $method = defined $arg->{method} ? $arg->{method} : 'read_handle';
+
+  sub {
+    my ($invocant, $filename) = splice @_, 0, 2;
+
+    # Check the file
+    Carp::croak "no filename specified"           unless $filename;
+    Carp::croak "file '$filename' does not exist" unless -e $filename;
+    Carp::croak "'$filename' is not a plain file" unless -f _;
+
+    my $handle = IO::File->new($filename, '<')
+      or Carp::croak "couldn't read file '$filename': $!";
+
+    $invocant->$method($handle, @_);
+  }
+}
+
+
+sub _mk_read_string {
+  my ($self, $name, $arg) = @_;
+
+  my $method = defined $arg->{method} ? $arg->{method} : 'read_handle';
+
+  sub {
+    my ($invocant, $string) = splice @_, 0, 2;
+
+    Carp::croak "no string provided" unless defined $string;
+
+    my $handle = IO::String->new(\$string);
+
+    $invocant->$method($handle, @_);
+  }
+}
+
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Mixin::Linewise::Readers - get linewise readers for strings and filenames
+
+=head1 VERSION
+
+version 0.004
 
 =head1 SYNOPSIS
 
@@ -64,28 +114,6 @@ reading, and then calls C<read_handle> on the opened handle.
 
 Any arguments after C<$filename> are passed along after to C<read_handle>.
 
-=cut
-
-sub _mk_read_file {
-  my ($self, $name, $arg) = @_;
-
-  my $method = defined $arg->{method} ? $arg->{method} : 'read_handle';
-
-  sub {
-    my ($invocant, $filename) = splice @_, 0, 2;
-
-    # Check the file
-    Carp::croak "no filename specified"           unless $filename;
-    Carp::croak "file '$filename' does not exist" unless -e $filename;
-    Carp::croak "'$filename' is not a plain file" unless -f _;
-
-    my $handle = IO::File->new($filename, '<')
-      or Carp::croak "couldn't read file '$filename': $!";
-
-    $invocant->$method($handle, @_);
-  }
-}
-
 =head2 read_string
 
   Your::Pkg->read_string($string);
@@ -95,43 +123,15 @@ string, and then calls C<read_handle> on the opened handle.
 
 Any arguments after C<$string> are passed along after to C<read_handle>.
 
-=cut
-
-sub _mk_read_string {
-  my ($self, $name, $arg) = @_;
-
-  my $method = defined $arg->{method} ? $arg->{method} : 'read_handle';
-
-  sub {
-    my ($invocant, $string) = splice @_, 0, 2;
-
-    Carp::croak "no string provided" unless defined $string;
-
-    my $handle = IO::String->new(\$string);
-
-    $invocant->$method($handle, @_);
-  }
-}
-
-=head1 BUGS
-
-Bugs should be reported via the CPAN bug tracker at
-
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Mixin-Linewise>
-
-For other issues, or commercial enhancement or support, contact the author.
-
 =head1 AUTHOR
 
-Ricardo SIGNES, C<< E<lt>rjbs@cpan.orgE<gt> >>
+Ricardo SIGNES <rjbs@cpan.org>
 
-=head1 COPYRIGHT
+=head1 COPYRIGHT AND LICENSE
 
-Copyright 2008, Ricardo SIGNES.
+This software is copyright (c) 2008 by Ricardo SIGNES.
 
-This program is free software; you may redistribute it and/or modify it under
-the same terms as Perl itself.
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
-
-1;

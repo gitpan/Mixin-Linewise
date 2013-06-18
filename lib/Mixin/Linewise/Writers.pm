@@ -1,8 +1,10 @@
 use strict;
 use warnings;
 package Mixin::Linewise::Writers;
-
-our $VERSION = '0.003';
+{
+  $Mixin::Linewise::Writers::VERSION = '0.004';
+}
+# ABSTRACT: get linewise writeers for strings and filenames
 
 use Carp ();
 use IO::File;
@@ -16,9 +18,56 @@ use Sub::Exporter -setup => {
   },
 };
 
+
+sub _mk_write_file {
+  my ($self, $name, $arg) = @_;
+  my $method = defined $arg->{method} ? $arg->{method} : 'write_handle';
+
+  sub {
+    my ($invocant, $data, $filename) = splice @_, 0, 3;
+
+    # Check the file
+    Carp::croak "no filename specified"           unless $filename;
+    Carp::croak "'$filename' is not a plain file" if -e $filename && ! -f _;
+
+    # Write out the file
+    my $handle = IO::File->new($filename, '>')
+      or Carp::croak "couldn't write to file '$filename': $!";
+
+    $invocant->write_handle($data, $handle, @_);
+  }
+}
+
+
+sub _mk_write_string {
+  my ($self, $name, $arg) = @_;
+  my $method = defined $arg->{method} ? $arg->{method} : 'write_handle';
+
+  sub {
+    my ($invocant, $data) = splice @_, 0, 2;
+
+    my $string = '';
+    my $handle = IO::String->new($string);
+
+    $invocant->write_handle($data, $handle, @_);
+
+    return $string;
+  }
+}
+
+1;
+
+__END__
+
+=pod
+
 =head1 NAME
 
 Mixin::Linewise::Writers - get linewise writeers for strings and filenames
+
+=head1 VERSION
+
+version 0.004
 
 =head1 SYNOPSIS
 
@@ -60,27 +109,6 @@ C<write_handle> with that handle.
 
 Any arguments after C<$filename> are passed along after to C<write_handle>.
 
-=cut
-
-sub _mk_write_file {
-  my ($self, $name, $arg) = @_;
-  my $method = defined $arg->{method} ? $arg->{method} : 'write_handle';
-
-  sub {
-    my ($invocant, $data, $filename) = splice @_, 0, 3;
-
-    # Check the file
-    Carp::croak "no filename specified"           unless $filename;
-    Carp::croak "'$filename' is not a plain file" if -e $filename && ! -f _;
-
-    # Write out the file
-    my $handle = IO::File->new($filename, '>')
-      or Carp::croak "couldn't write to file '$filename': $!";
-
-    $invocant->write_handle($data, $handle, @_);
-  }
-}
-
 =head2 write_string
 
   my $string = Your::Pkg->write_string($data);
@@ -90,43 +118,15 @@ write to that handle, and return the resulting string.
 
 Any arguments after C<$data> are passed along after to C<write_handle>.
 
-=cut
-
-sub _mk_write_string {
-  my ($self, $name, $arg) = @_;
-  my $method = defined $arg->{method} ? $arg->{method} : 'write_handle';
-
-  sub {
-    my ($invocant, $data) = splice @_, 0, 2;
-
-    my $string = '';
-    my $handle = IO::String->new($string);
-
-    $invocant->write_handle($data, $handle, @_);
-
-    return $string;
-  }
-}
-
-=head1 BUGS
-
-Bugs should be reported via the CPAN bug tracker at
-
-L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Mixin-Linewise>
-
-For other issues, or commercial enhancement or support, contact the author.
-
 =head1 AUTHOR
 
-Ricardo SIGNES, C<< E<lt>rjbs@cpan.orgE<gt> >>
+Ricardo SIGNES <rjbs@cpan.org>
 
-=head1 COPYRIGHT
+=head1 COPYRIGHT AND LICENSE
 
-Copyright 2008, Ricardo SIGNES.
+This software is copyright (c) 2008 by Ricardo SIGNES.
 
-This program is free software; you may redistribute it and/or modify it under
-the same terms as Perl itself.
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
-
-1;
