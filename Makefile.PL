@@ -28,12 +28,15 @@ my %WriteMakefileArgs = (
     "warnings" => 0
   },
   "TEST_REQUIRES" => {
-    "File::Find" => 0,
-    "File::Temp" => 0,
+    "Encode" => 0,
+    "File::Spec" => 0,
+    "IO::Handle" => 0,
+    "IPC::Open3" => 0,
     "Test::More" => "0.96",
-    "lib" => 0
+    "lib" => 0,
+    "utf8" => 0
   },
-  "VERSION" => "0.004",
+  "VERSION" => "0.100",
   "test" => {
     "TESTS" => "t/*.t"
   }

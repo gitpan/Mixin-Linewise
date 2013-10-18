@@ -2,9 +2,9 @@ use strict;
 use warnings;
 package Mixin::Linewise::Writers;
 {
-  $Mixin::Linewise::Writers::VERSION = '0.004';
+  $Mixin::Linewise::Writers::VERSION = '0.100'; # TRIAL
 }
-# ABSTRACT: get linewise writeers for strings and filenames
+# ABSTRACT: get linewise writers for strings and filenames
 
 use Carp ();
 use IO::File;
@@ -22,16 +22,27 @@ use Sub::Exporter -setup => {
 sub _mk_write_file {
   my ($self, $name, $arg) = @_;
   my $method = defined $arg->{method} ? $arg->{method} : 'write_handle';
+  my $dflt_enc = defined $arg->{binmode} ? $arg->{binmode} : 'encoding(UTF-8)';
 
   sub {
-    my ($invocant, $data, $filename) = splice @_, 0, 3;
+    my ($invocant, $data, $options, $filename);
+    if ( ref $_[2] eq 'HASH' ) {
+      # got options before filename
+      ($invocant, $data, $options, $filename) = splice @_, 0, 4;
+    }
+    else {
+      ($invocant, $data, $filename) = splice @_, 0, 3;
+    }
+
+    $options->{binmode} = $dflt_enc unless defined $options->{binmode};
+    $options->{binmode} =~ s/^://; # we add it later
 
     # Check the file
     Carp::croak "no filename specified"           unless $filename;
     Carp::croak "'$filename' is not a plain file" if -e $filename && ! -f _;
 
     # Write out the file
-    my $handle = IO::File->new($filename, '>')
+    my $handle = IO::File->new($filename, ">:$options->{binmode}")
       or Carp::croak "couldn't write to file '$filename': $!";
 
     $invocant->write_handle($data, $handle, @_);
@@ -63,11 +74,11 @@ __END__
 
 =head1 NAME
 
-Mixin::Linewise::Writers - get linewise writeers for strings and filenames
+Mixin::Linewise::Writers - get linewise writers for strings and filenames
 
 =head1 VERSION
 
-version 0.004
+version 0.100
 
 =head1 SYNOPSIS
 
@@ -100,12 +111,23 @@ information.
 Both can be generated with the option "method" which requests that a method
 other than "write_handle" is called with the created IO::Handle.
 
+If given a "binmode" option, any C<write_file> type functions will use
+that as an IO layer, otherwise, the default is C<encoding(UTF-8)>.
+
+  use Mixin::Linewise::Writers -writers => { binmode => "raw" };
+  use Mixin::Linewise::Writers -writers => { binmode => "encoding(iso-8859-1)" };
+
 =head2 write_file
 
   Your::Pkg->write_file($data, $filename);
+  Your::Pkg->write_file($data, $options, $filename);
 
 This method will try to open a new file with the given name.  It will then call
 C<write_handle> with that handle.
+
+An optional hash reference may be passed before C<$filename> with options.
+The only valid option currently is C<binmode>, which overrides any
+default set from C<use> or the built-in C<encoding(UTF-8)>.
 
 Any arguments after C<$filename> are passed along after to C<write_handle>.
 
