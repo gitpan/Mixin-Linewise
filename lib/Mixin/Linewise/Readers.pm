@@ -2,13 +2,13 @@ use strict;
 use warnings;
 package Mixin::Linewise::Readers;
 {
-  $Mixin::Linewise::Readers::VERSION = '0.100'; # TRIAL
+  $Mixin::Linewise::Readers::VERSION = '0.101';
 }
 # ABSTRACT: get linewise readers for strings and filenames
 
+use 5.8.1; # PerlIO
 use Carp ();
 use IO::File;
-use IO::String;
 
 use Sub::Exporter -setup => {
   exports => { map {; "read_$_" => \"_mk_read_$_" } qw(file string) },
@@ -61,7 +61,9 @@ sub _mk_read_string {
 
     Carp::croak "no string provided" unless defined $string;
 
-    my $handle = IO::String->new(\$string);
+    utf8::upgrade($string);
+    open my $handle, '<:raw:utf8', \$string
+      or Carp::croak("can't open handle to read from string: $!");
 
     $invocant->$method($handle, @_);
   }
@@ -73,13 +75,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Mixin::Linewise::Readers - get linewise readers for strings and filenames
 
 =head1 VERSION
 
-version 0.100
+version 0.101
 
 =head1 SYNOPSIS
 
@@ -140,7 +144,7 @@ Any arguments after C<$filename> are passed along after to C<read_handle>.
 
   Your::Pkg->read_string($string);
 
-If generated, the C<read_string> creates an IO::String handle from the given
+If generated, the C<read_string> creates an in-memory handle from the given
 string, and then calls C<read_handle> on the opened handle.
 
 Any arguments after C<$string> are passed along after to C<read_handle>.
