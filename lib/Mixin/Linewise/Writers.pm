@@ -2,13 +2,14 @@ use strict;
 use warnings;
 package Mixin::Linewise::Writers;
 {
-  $Mixin::Linewise::Writers::VERSION = '0.101';
+  $Mixin::Linewise::Writers::VERSION = '0.102';
 }
 # ABSTRACT: get linewise writers for strings and filenames
 
 use 5.8.1; # PerlIO
 use Carp ();
 use IO::File;
+use IO::String;
 
 use Sub::Exporter -setup => {
   exports => { map {; "write_$_" => \"_mk_write_$_" } qw(file string) },
@@ -58,13 +59,9 @@ sub _mk_write_string {
     my ($invocant, $data) = splice @_, 0, 2;
 
     my $string = '';
-
-    open my $handle, '>:raw:utf8', \$string
-      or Carp::croak("can't open handle to write to string: $!");
+    my $handle = IO::String->new($string);
 
     $invocant->write_handle($data, $handle, @_);
-
-    utf8::upgrade($string);
 
     return $string;
   }
@@ -76,15 +73,13 @@ __END__
 
 =pod
 
-=encoding UTF-8
-
 =head1 NAME
 
 Mixin::Linewise::Writers - get linewise writers for strings and filenames
 
 =head1 VERSION
 
-version 0.101
+version 0.102
 
 =head1 SYNOPSIS
 
@@ -141,7 +136,7 @@ Any arguments after C<$filename> are passed along after to C<write_handle>.
 
   my $string = Your::Pkg->write_string($data);
 
-C<write_string> will create a new in memory handle, call C<write_handle> to
+C<write_string> will create a new IO::String handle, call C<write_handle> to
 write to that handle, and return the resulting string.
 
 Any arguments after C<$data> are passed along after to C<write_handle>.
