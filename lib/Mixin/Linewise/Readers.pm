@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package Mixin::Linewise::Readers;
 {
-  $Mixin::Linewise::Readers::VERSION = '0.102';
+  $Mixin::Linewise::Readers::VERSION = '0.103';
 }
 # ABSTRACT: get linewise readers for strings and filenames
 
@@ -56,13 +56,18 @@ sub _mk_read_string {
   my ($self, $name, $arg) = @_;
 
   my $method = defined $arg->{method} ? $arg->{method} : 'read_handle';
+  my $dflt_enc = defined $arg->{binmode} ? $arg->{binmode} : 'encoding(UTF-8)';
 
   sub {
     my ($invocant, $string) = splice @_, 0, 2;
 
+    my $binmode = $dflt_enc;
+    $binmode =~ s/^://; # we add it later
+
     Carp::croak "no string provided" unless defined $string;
 
-    my $handle = IO::String->new(\$string);
+    open my $handle, "<:$binmode", \$string
+      or die "error opening string for reading: $!";
 
     $invocant->$method($handle, @_);
   }
@@ -74,13 +79,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Mixin::Linewise::Readers - get linewise readers for strings and filenames
 
 =head1 VERSION
 
-version 0.102
+version 0.103
 
 =head1 SYNOPSIS
 

@@ -2,14 +2,13 @@ use strict;
 use warnings;
 package Mixin::Linewise::Writers;
 {
-  $Mixin::Linewise::Writers::VERSION = '0.102';
+  $Mixin::Linewise::Writers::VERSION = '0.103';
 }
 # ABSTRACT: get linewise writers for strings and filenames
 
 use 5.8.1; # PerlIO
 use Carp ();
 use IO::File;
-use IO::String;
 
 use Sub::Exporter -setup => {
   exports => { map {; "write_$_" => \"_mk_write_$_" } qw(file string) },
@@ -54,14 +53,20 @@ sub _mk_write_file {
 sub _mk_write_string {
   my ($self, $name, $arg) = @_;
   my $method = defined $arg->{method} ? $arg->{method} : 'write_handle';
+  my $dflt_enc = defined $arg->{binmode} ? $arg->{binmode} : 'encoding(UTF-8)';
 
   sub {
     my ($invocant, $data) = splice @_, 0, 2;
 
+    my $binmode = $dflt_enc;
+    $binmode =~ s/^://; # we add it later
+
     my $string = '';
-    my $handle = IO::String->new($string);
+    open my $handle, ">:$binmode", \$string
+      or die "error opening string for output: $!";
 
     $invocant->write_handle($data, $handle, @_);
+    close $handle or die "error closing string after output: $!";
 
     return $string;
   }
@@ -73,13 +78,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
 =head1 NAME
 
 Mixin::Linewise::Writers - get linewise writers for strings and filenames
 
 =head1 VERSION
 
-version 0.102
+version 0.103
 
 =head1 SYNOPSIS
 

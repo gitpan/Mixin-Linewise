@@ -15,5 +15,6 @@ t/encoding.t
 t/lib/MLTests.pm
 t/reader.t
 t/utf8.txt
+t/writer.t
 xt/release/changes_has_content.t
 xt/release/pod-syntax.t
