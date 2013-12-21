@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package Mixin::Linewise::Writers;
 {
-  $Mixin::Linewise::Writers::VERSION = '0.103';
+  $Mixin::Linewise::Writers::VERSION = '0.104';
 }
 # ABSTRACT: get linewise writers for strings and filenames
 
@@ -86,7 +86,7 @@ Mixin::Linewise::Writers - get linewise writers for strings and filenames
 
 =head1 VERSION
 
-version 0.103
+version 0.104
 
 =head1 SYNOPSIS
 
@@ -143,8 +143,11 @@ Any arguments after C<$filename> are passed along after to C<write_handle>.
 
   my $string = Your::Pkg->write_string($data);
 
-C<write_string> will create a new IO::String handle, call C<write_handle> to
-write to that handle, and return the resulting string.
+C<write_string> will create a new handle on the given string, then call
+C<write_handle> to write to that handle, and return the resulting string.
+Because handles on strings must be octet-oriented, the string B<must contain
+octets>.  It will be opened in the default binmode established by importing.
+(See L</EXPORTS>, above.)
 
 Any arguments after C<$data> are passed along after to C<write_handle>.
 

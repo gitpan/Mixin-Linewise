@@ -29,7 +29,6 @@
          "requires" : {
             "Carp" : "0",
             "IO::File" : "0",
-            "IO::String" : "0",
             "Sub::Exporter" : "0",
             "perl" : "v5.8.1",
             "strict" : "0",
@@ -57,7 +56,7 @@
          "web" : "https://github.com/rjbs/Mixin-Linewise"
       }
    },
-   "version" : "0.103",
+   "version" : "0.104",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018001"

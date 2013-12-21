@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package Mixin::Linewise;
 {
-  $Mixin::Linewise::VERSION = '0.103';
+  $Mixin::Linewise::VERSION = '0.104';
 }
 # ABSTRACT: write your linewise code for handles; this does the rest
 use 5.006;
@@ -24,7 +24,7 @@ Mixin::Linewise - write your linewise code for handles; this does the rest
 
 =head1 VERSION
 
-version 0.103
+version 0.104
 
 =head1 DESCRIPTION
 

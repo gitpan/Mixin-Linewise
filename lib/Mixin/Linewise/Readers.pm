@@ -2,14 +2,13 @@ use strict;
 use warnings;
 package Mixin::Linewise::Readers;
 {
-  $Mixin::Linewise::Readers::VERSION = '0.103';
+  $Mixin::Linewise::Readers::VERSION = '0.104';
 }
 # ABSTRACT: get linewise readers for strings and filenames
 
 use 5.8.1; # PerlIO
 use Carp ();
 use IO::File;
-use IO::String;
 
 use Sub::Exporter -setup => {
   exports => { map {; "read_$_" => \"_mk_read_$_" } qw(file string) },
@@ -87,7 +86,7 @@ Mixin::Linewise::Readers - get linewise readers for strings and filenames
 
 =head1 VERSION
 
-version 0.103
+version 0.104
 
 =head1 SYNOPSIS
 
@@ -148,8 +147,10 @@ Any arguments after C<$filename> are passed along after to C<read_handle>.
 
   Your::Pkg->read_string($string);
 
-If generated, the C<read_string> creates an IO::String handle from the given
-string, and then calls C<read_handle> on the opened handle.
+If generated, the C<read_string> creates a handle on the given string, and
+then calls C<read_handle> on the opened handle.  Because handles on strings
+must be octet-oriented, the string B<must contain octets>.  It will be opened
+in the default binmode established by importing.  (See L</EXPORTS>, above.)
 
 Any arguments after C<$string> are passed along after to C<read_handle>.
 

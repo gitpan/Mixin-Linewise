@@ -22,7 +22,6 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "Carp" => 0,
     "IO::File" => 0,
-    "IO::String" => 0,
     "Sub::Exporter" => 0,
     "strict" => 0,
     "warnings" => 0
@@ -33,7 +32,7 @@ my %WriteMakefileArgs = (
     "lib" => 0,
     "utf8" => 0
   },
-  "VERSION" => "0.103",
+  "VERSION" => "0.104",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -44,7 +43,6 @@ my %FallbackPrereqs = (
   "Carp" => 0,
   "Encode" => 0,
   "IO::File" => 0,
-  "IO::String" => 0,
   "Sub::Exporter" => 0,
   "Test::More" => "0.96",
   "lib" => 0,
