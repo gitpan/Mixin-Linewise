@@ -1,5 +1,9 @@
 Changelog for Mixin-Linewise
 
+0.105     2014-02-20 21:53:06-05:00 America/New_York
+        - update Readers to, by default, use PerlIO::utf8_strict to avoid
+          problems with CRLF layer on Win32
+
 0.104     2013-12-21 15:19:00-0500 America/New_York
         - clean up the docs for changes made in 0.103
 

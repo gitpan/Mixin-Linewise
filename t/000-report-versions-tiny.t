@@ -52,6 +52,7 @@ eval { $v .= pmver('Carp','any version') };
 eval { $v .= pmver('Encode','any version') };
 eval { $v .= pmver('ExtUtils::MakeMaker','6.30') };
 eval { $v .= pmver('IO::File','any version') };
+eval { $v .= pmver('PerlIO::utf8_strict','any version') };
 eval { $v .= pmver('Sub::Exporter','any version') };
 eval { $v .= pmver('Test::More','0.96') };
 eval { $v .= pmver('lib','any version') };
