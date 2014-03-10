@@ -2,8 +2,8 @@ use strict;
 use warnings;
 package Mixin::Linewise::Writers;
 # ABSTRACT: get linewise writers for strings and filenames
-$Mixin::Linewise::Writers::VERSION = '0.105';
-use 5.8.1; # PerlIO
+$Mixin::Linewise::Writers::VERSION = '0.106';
+use 5.008001; # PerlIO
 use Carp ();
 use IO::File;
 
@@ -148,7 +148,7 @@ Mixin::Linewise::Writers - get linewise writers for strings and filenames
 
 =head1 VERSION
 
-version 0.105
+version 0.106
 
 =head1 SYNOPSIS
 

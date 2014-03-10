@@ -2,7 +2,7 @@ use strict;
 use warnings;
 package Mixin::Linewise;
 # ABSTRACT: write your linewise code for handles; this does the rest
-$Mixin::Linewise::VERSION = '0.105';
+$Mixin::Linewise::VERSION = '0.106';
 use 5.006;
 use Carp ();
 Carp::confess "not meant to be loaded";
@@ -30,7 +30,7 @@ Mixin::Linewise - write your linewise code for handles; this does the rest
 
 =head1 VERSION
 
-version 0.105
+version 0.106
 
 =head1 DESCRIPTION
 

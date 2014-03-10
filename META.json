@@ -31,7 +31,7 @@
             "IO::File" : "0",
             "PerlIO::utf8_strict" : "0",
             "Sub::Exporter" : "0",
-            "perl" : "v5.8.1",
+            "perl" : "5.008001",
             "strict" : "0",
             "warnings" : "0"
          }
@@ -57,7 +57,7 @@
          "web" : "https://github.com/rjbs/Mixin-Linewise"
       }
    },
-   "version" : "0.105",
+   "version" : "0.106",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.019009"
@@ -92,7 +92,7 @@
                }
             },
             "name" : "@RJBS/RJBS-Outdated",
-            "version" : "0.017"
+            "version" : "0.020"
          },
          {
             "class" : "Dist::Zilla::Plugin::PromptIfStale",
@@ -106,7 +106,7 @@
                }
             },
             "name" : "@RJBS/CPAN-Outdated",
-            "version" : "0.017"
+            "version" : "0.020"
          },
          {
             "class" : "Dist::Zilla::Plugin::PruneCruft",

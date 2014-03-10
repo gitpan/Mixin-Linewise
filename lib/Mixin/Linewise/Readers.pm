@@ -2,8 +2,8 @@ use strict;
 use warnings;
 package Mixin::Linewise::Readers;
 # ABSTRACT: get linewise readers for strings and filenames
-$Mixin::Linewise::Readers::VERSION = '0.105';
-use 5.8.1; # PerlIO
+$Mixin::Linewise::Readers::VERSION = '0.106';
+use 5.008001; # PerlIO
 use Carp ();
 use IO::File;
 use PerlIO::utf8_strict;
@@ -152,7 +152,7 @@ Mixin::Linewise::Readers - get linewise readers for strings and filenames
 
 =head1 VERSION
 
-version 0.105
+version 0.106
 
 =head1 SYNOPSIS
 
